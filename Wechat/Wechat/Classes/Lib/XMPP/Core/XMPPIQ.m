@@ -11,8 +11,6 @@
 
 @implementation XMPPIQ
 
-#if DEBUG
-
 + (void)initialize
 {
 	// We use the object_setClass method below to dynamically change the class from a standard NSXMLElement.
@@ -34,8 +32,6 @@
 		exit(15);
 	}
 }
-
-#endif
 
 + (XMPPIQ *)iqFromElement:(NSXMLElement *)element
 {

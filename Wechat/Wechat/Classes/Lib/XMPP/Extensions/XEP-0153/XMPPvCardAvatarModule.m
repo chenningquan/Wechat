@@ -234,7 +234,7 @@ NSString *const kXMPPvCardAvatarPhotoElement = @"photo";
     NSString *savedPhotoHash = [_moduleStorage photoHashForJID:jid xmppStream:xmppStream];
 
 	// check the hash
-    if ([photoHash caseInsensitiveCompare:savedPhotoHash] != NSOrderedSame
+	if (![photoHash isEqualToString:[_moduleStorage photoHashForJID:jid xmppStream:xmppStream]]
         && !([photoHash length] == 0 && [savedPhotoHash length] == 0)) {
 		[_xmppvCardTempModule fetchvCardTempForJID:jid ignoreStorage:YES];
 	}
@@ -287,7 +287,7 @@ NSString *const kXMPPvCardAvatarPhotoElement = @"photo";
 
 - (void)xmppvCardTempModuleDidUpdateMyvCard:(XMPPvCardTempModule *)vCardTempModule{
     //The vCard has been updated on the server so we need to cache it
-    [_xmppvCardTempModule fetchvCardTempForJID:[xmppStream myJID] ignoreStorage:NO];
+    [_xmppvCardTempModule fetchvCardTempForJID:[xmppStream myJID] ignoreStorage:YES];
 }
 
 - (void)xmppvCardTempModule:(XMPPvCardTempModule *)vCardTempModule failedToUpdateMyvCard:(NSXMLElement *)error{

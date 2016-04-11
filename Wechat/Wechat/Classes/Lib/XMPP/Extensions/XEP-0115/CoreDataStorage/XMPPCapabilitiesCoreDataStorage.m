@@ -20,7 +20,7 @@
 
 static XMPPCapabilitiesCoreDataStorage *sharedInstance;
 
-+ (instancetype)sharedInstance
++ (XMPPCapabilitiesCoreDataStorage *)sharedInstance
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{

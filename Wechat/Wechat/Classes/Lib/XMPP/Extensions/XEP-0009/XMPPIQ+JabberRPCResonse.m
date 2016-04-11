@@ -229,17 +229,19 @@
 	NSString *key = [self objectFromElement:[memberElement elementForName:@"name"]];
 	id value = [self objectFromElement:[memberElement elementForName:@"value"]];
 	
-	return @{key : value};
+	return [NSDictionary dictionaryWithObject:value forKey:key];	
 }
 	
 #pragma mark -
 
 - (NSDate *)parseDateString: (NSString *)dateString withFormat: (NSString *)format {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+    NSDate *result = nil;
+    
     [dateFormatter setDateFormat: format];
     
-    NSDate *result = [dateFormatter dateFromString: dateString];
+    result = [dateFormatter dateFromString: dateString];
+    
     
     return result;
 }
@@ -247,19 +249,19 @@
 #pragma mark -
 
 - (NSNumber *)parseInteger: (NSString *)value {
-    return @([value integerValue]);
+    return [NSNumber numberWithInteger: [value integerValue]];
 }
 
 - (NSNumber *)parseDouble: (NSString *)value {
-    return @([value doubleValue]);
+    return [NSNumber numberWithDouble: [value doubleValue]];
 }
 
 - (NSNumber *)parseBoolean: (NSString *)value {
     if ([value isEqualToString: @"1"]) {
-        return @YES;
+        return [NSNumber numberWithBool: YES];
     }
     
-    return @NO;
+    return [NSNumber numberWithBool: NO];
 }
 
 - (NSString *)parseString: (NSString *)value {

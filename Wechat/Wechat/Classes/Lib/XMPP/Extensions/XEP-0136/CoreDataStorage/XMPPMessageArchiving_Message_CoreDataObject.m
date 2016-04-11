@@ -141,7 +141,7 @@
 
 - (void)setIsOutgoing:(BOOL)flag
 {
-	self.outgoing = @(flag);
+	self.outgoing = [NSNumber numberWithBool:flag];
 }
 
 - (BOOL)isComposing
@@ -151,7 +151,7 @@
 
 - (void)setIsComposing:(BOOL)flag
 {
-	self.composing = @(flag);
+	self.composing = [NSNumber numberWithBool:flag];
 }
 
 #pragma mark Hooks

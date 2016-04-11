@@ -236,10 +236,10 @@ typedef enum XMPPBlockingQueryInfoType {
 {
     XMPPLogTrace();
     
-    id value = blockingDict[[xmppJID full]];
+    id value = [blockingDict objectForKey:[xmppJID full]];
     if (value == nil)
     {
-        blockingDict[[xmppJID full]] = [NSNull null];
+        [blockingDict setObject:[NSNull null] forKey:[xmppJID full]];
     }
     
     // <iq from='juliet@capulet.com/chamber' type='set' id='block1'>
@@ -268,7 +268,7 @@ typedef enum XMPPBlockingQueryInfoType {
 {
     XMPPLogTrace();
     
-    id value = blockingDict[[xmppJID full]];
+    id value = [blockingDict objectForKey:[xmppJID full]];
     if (value != nil)
     {
         [blockingDict removeObjectForKey:[xmppJID full]];
@@ -297,7 +297,7 @@ typedef enum XMPPBlockingQueryInfoType {
 
 - (BOOL)containsJID:(XMPPJID*)xmppJID
 {
-    if (blockingDict[[xmppJID full]])
+    if ([blockingDict objectForKey:[xmppJID full]])
     {
         return true;
     }
@@ -349,7 +349,7 @@ typedef enum XMPPBlockingQueryInfoType {
 	queryInfo.timer = timer;
 	
 	// Add to dictionary
-	pendingQueries[uuid] = queryInfo;
+	[pendingQueries setObject:queryInfo forKey:uuid];
 }
 
 - (void)removeQueryInfo:(XMPPBlockingQueryInfo *)queryInfo withKey:(NSString *)uuid
@@ -385,7 +385,7 @@ typedef enum XMPPBlockingQueryInfoType {
 
 - (void)queryTimeout:(NSString *)uuid
 {
-	XMPPBlockingQueryInfo *queryInfo = pendingQueries[uuid];
+	XMPPBlockingQueryInfo *queryInfo = [pendingQueries objectForKey:uuid];
 	if (queryInfo)
 	{
 		[self processQuery:queryInfo withFailureCode:XMPPBlockingQueryTimeout];
@@ -417,10 +417,10 @@ typedef enum XMPPBlockingQueryInfoType {
 				NSString *name = [listItem attributeStringValueForName:@"jid"];
 				if (name)
 				{
-					id value = blockingDict[name];
+					id value = [blockingDict objectForKey:name];
 					if (value == nil)
 					{
-						blockingDict[name] = [NSNull null];
+						[blockingDict setObject:[NSNull null] forKey:name];
 					}
 				}
 			}
@@ -459,12 +459,12 @@ typedef enum XMPPBlockingQueryInfoType {
         }
         else
         {
-            XMPPBlockingQueryInfo *queryInfo = pendingQueries[[iq elementID]];
+            XMPPBlockingQueryInfo *queryInfo = [pendingQueries objectForKey:[iq elementID]];
             
-            id value = blockingDict[[queryInfo.blockingXMPPJID full]];
+            id value = [blockingDict objectForKey:[queryInfo.blockingXMPPJID full]];
             if (value == nil)
             {
-                blockingDict[[queryInfo.blockingXMPPJID full]] = [NSNull null];
+                [blockingDict setObject:[NSNull null] forKey:[queryInfo.blockingXMPPJID full]];
             }
             
             [multicastDelegate xmppBlocking:self didNotBlockJID:queryInfo.blockingXMPPJID error:iq];
@@ -481,12 +481,12 @@ typedef enum XMPPBlockingQueryInfoType {
         }
         else
         {
-            XMPPBlockingQueryInfo *queryInfo = pendingQueries[[iq elementID]];
+            XMPPBlockingQueryInfo *queryInfo = [pendingQueries objectForKey:[iq elementID]];
             
-            id value = blockingDict[[queryInfo.blockingXMPPJID full]];
+            id value = [blockingDict objectForKey:[queryInfo.blockingXMPPJID full]];
             if (value == nil)
             {
-                blockingDict[queryInfo.blockingXMPPJID] = [NSNull null];
+                [blockingDict setObject:[NSNull null] forKey:queryInfo.blockingXMPPJID];
             }
             
             [multicastDelegate xmppBlocking:self didNotUnblockAllDueToError:iq];
@@ -518,12 +518,6 @@ typedef enum XMPPBlockingQueryInfoType {
 		if (block || unblock)
 		{
             NSXMLElement *list = [block elementForName:@"item"];
-            
-            if (!list)
-            {
-                list = [unblock elementForName:@"item"];
-            }
-            
             NSString *itemName = [list attributeStringValueForName:@"jid"];
 			if (itemName == nil)
 			{
@@ -547,7 +541,7 @@ typedef enum XMPPBlockingQueryInfoType {
 	{
 		// This may be a response to a query we sent
 		
-		XMPPBlockingQueryInfo *queryInfo = pendingQueries[[iq elementID]];
+		XMPPBlockingQueryInfo *queryInfo = [pendingQueries objectForKey:[iq elementID]];
 
         
 		if (queryInfo)
@@ -568,7 +562,7 @@ typedef enum XMPPBlockingQueryInfoType {
 	
 	for (NSString *uuid in pendingQueries)
 	{
-		XMPPBlockingQueryInfo *queryInfo = pendingQueries[uuid];
+		XMPPBlockingQueryInfo *queryInfo = [pendingQueries objectForKey:uuid];
 		
 		[self processQuery:queryInfo withFailureCode:XMPPBlockingDisconnect];
 	}

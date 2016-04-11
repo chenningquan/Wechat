@@ -37,7 +37,7 @@ enum {
 
 static XMPPvCardCoreDataStorage *sharedInstance;
 
-+ (instancetype)sharedInstance
++ (XMPPvCardCoreDataStorage *)sharedInstance
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -170,7 +170,7 @@ static XMPPvCardCoreDataStorage *sharedInstance;
 		vCard = [XMPPvCardCoreDataStorageObject fetchOrInsertvCardForJID:jid
 		                                          inManagedObjectContext:[self managedObjectContext]];
 		
-		vCard.waitingForFetch = @NO;
+		vCard.waitingForFetch = [NSNumber numberWithBool:NO];
 		vCard.vCardTemp = vCardTemp;
 		
 		// Update photo and photo hash
@@ -210,7 +210,7 @@ static XMPPvCardCoreDataStorage *sharedInstance;
 		}
         else if (!waitingForFetch)
 		{
-			vCard.waitingForFetch = @YES;
+			vCard.waitingForFetch = [NSNumber numberWithBool:YES];
 			vCard.lastUpdated = [NSDate date];
 			
 			result = YES;

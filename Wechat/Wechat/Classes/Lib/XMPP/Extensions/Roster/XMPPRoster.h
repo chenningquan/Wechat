@@ -1,9 +1,7 @@
 #import <Foundation/Foundation.h>
 
-#if TARGET_OS_IPHONE
-    #import <UIKit/UIKit.h>
-#else
-    #import <Cocoa/Cocoa.h>
+#if !TARGET_OS_IPHONE
+  #import <Cocoa/Cocoa.h>
 #endif
 
 #import "XMPP.h"
@@ -157,22 +155,17 @@
 
 /**
  * The initial roster has been received by client and is currently being populated.
- * @see xmppRosterDidBeginPopulating:withVersion:
+ * @see xmppRosterDidBeginPopulating:
  * @see xmppRosterDidEndPopulating:
 **/
 @property (assign, getter = isPopulating, readonly) BOOL populating;
 
-/**
- * The initial roster has been received by client and populated.
-**/
-@property (assign, readonly) BOOL hasRoster;
 
 /**
  * Manually fetch the roster from the server.
  * Useful if you disable autoFetchRoster.
 **/
 - (void)fetchRoster;
-- (void)fetchRosterVersion:(NSString *)version;
 
 /**
  * Adds the given user to the roster with an optional nickname 
@@ -323,7 +316,7 @@
 **/
 - (BOOL)configureWithParent:(XMPPRoster *)aParent queue:(dispatch_queue_t)queue;
 
-- (void)beginRosterPopulationForXMPPStream:(XMPPStream *)stream withVersion:(NSString *)version;
+- (void)beginRosterPopulationForXMPPStream:(XMPPStream *)stream;
 - (void)endRosterPopulationForXMPPStream:(XMPPStream *)stream;
 
 - (void)handleRosterItem:(NSXMLElement *)item xmppStream:(XMPPStream *)stream;
@@ -335,13 +328,6 @@
 - (void)clearAllUsersAndResourcesForXMPPStream:(XMPPStream *)stream;
 
 - (NSArray *)jidsForXMPPStream:(XMPPStream *)stream;
-
-- (void)getSubscription:(NSString **)subscription
-                    ask:(NSString **)ask
-               nickname:(NSString **)nickname
-                 groups:(NSArray **)groups
-                 forJID:(XMPPJID *)jid
-             xmppStream:(XMPPStream *)stream;
 
 @optional
 
@@ -385,7 +371,7 @@
 /**
  * Sent when the initial roster is received.
 **/
-- (void)xmppRosterDidBeginPopulating:(XMPPRoster *)sender withVersion:(NSString *)version;
+- (void)xmppRosterDidBeginPopulating:(XMPPRoster *)sender;
 
 /**
  * Sent when the initial roster has been populated into storage.

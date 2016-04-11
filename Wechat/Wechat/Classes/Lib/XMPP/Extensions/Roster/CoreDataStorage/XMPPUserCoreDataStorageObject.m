@@ -4,18 +4,11 @@
 #import "XMPPResourceCoreDataStorageObject.h"
 #import "XMPPGroupCoreDataStorageObject.h"
 #import "NSNumber+XMPP.h"
-#import "XMPPLogging.h"
 
 #if ! __has_feature(objc_arc)
 #warning This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
 #endif
 
-// Log levels: off, error, warn, info, verbose
-#if DEBUG
-static const int xmppLogLevel = XMPP_LOG_LEVEL_INFO; // | XMPP_LOG_FLAG_TRACE;
-#else
-static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
-#endif
 
 @interface XMPPUserCoreDataStorageObject ()
 
@@ -108,7 +101,7 @@ static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
 
 - (void)setSection:(NSInteger)value
 {
-	self.sectionNum = @(value);
+	self.sectionNum = [NSNumber numberWithInteger:value];
 }
 
 - (NSInteger)primitiveSection
@@ -196,7 +189,7 @@ static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
 {
 	if (jid == nil)
 	{
-		XMPPLogVerbose(@"XMPPUserCoreDataStorageObject: invalid jid (nil)");
+		NSLog(@"XMPPUserCoreDataStorageObject: invalid jid (nil)");
 		return nil;
 	}
 	
@@ -223,7 +216,7 @@ static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
 	
 	if (jid == nil)
 	{
-		XMPPLogVerbose(@"XMPPUserCoreDataStorageObject: invalid item (missing or invalid jid): %@", item);
+		NSLog(@"XMPPUserCoreDataStorageObject: invalid item (missing or invalid jid): %@", item);
 		return nil;
 	}
 	
@@ -269,14 +262,14 @@ static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
 	
 	if (jid == nil)
 	{
-		XMPPLogVerbose(@"XMPPUserCoreDataStorageObject: invalid item (missing or invalid jid): %@", item);
+		NSLog(@"XMPPUserCoreDataStorageObject: invalid item (missing or invalid jid): %@", item);
 		return;
 	}
 	
 	self.jid = jid;
 	self.nickname = [item attributeStringValueForName:@"name"];
 	
-	self.displayName = self.nickname ? : jidStr;
+	self.displayName = (self.nickname != nil) ? self.nickname : jidStr;
 	
 	self.subscription = [item attributeStringValueForName:@"subscription"];
 	self.ask = [item attributeStringValueForName:@"ask"];
@@ -291,7 +284,7 @@ static const int xmppLogLevel = XMPP_LOG_LEVEL_WARN;
 	NSArray *sortedResources = [[self allResources] sortedArrayUsingSelector:@selector(compare:)];
 	if ([sortedResources count] > 0)
 	{
-		XMPPResourceCoreDataStorageObject *resource = sortedResources[0];
+		XMPPResourceCoreDataStorageObject *resource = [sortedResources objectAtIndex:0];
 		
 		// Primary resource must have a non-negative priority
 		if ([resource priority] >= 0)

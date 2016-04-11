@@ -63,24 +63,11 @@
 	{
 		if ([coder allowsKeyedCoding])
 		{
-            if([coder respondsToSelector:@selector(requiresSecureCoding)] &&
-               [coder requiresSecureCoding])
-            {
-                message         = [coder decodeObjectOfClass:[XMPPMessage class] forKey:@"message"];
-                jid             = [coder decodeObjectOfClass:[XMPPJID class] forKey:@"jid"];
-                localTimestamp  = [coder decodeObjectOfClass:[NSDate class] forKey:@"localTimestamp"];
-                remoteTimestamp = [coder decodeObjectOfClass:[NSDate class] forKey:@"remoteTimestamp"];
-                isFromMe        = [coder decodeBoolForKey:@"isFromMe"];
-            }
-            else
-            {
-                message         = [coder decodeObjectForKey:@"message"];
-                jid             = [coder decodeObjectForKey:@"jid"];
-                localTimestamp  = [coder decodeObjectForKey:@"localTimestamp"];
-                remoteTimestamp = [coder decodeObjectForKey:@"remoteTimestamp"];
-                isFromMe        = [coder decodeBoolForKey:@"isFromMe"];
-            }
-			
+			message         = [coder decodeObjectForKey:@"message"];
+			jid             = [coder decodeObjectForKey:@"jid"];
+			localTimestamp  = [coder decodeObjectForKey:@"localTimestamp"];
+			remoteTimestamp = [coder decodeObjectForKey:@"remoteTimestamp"];
+			isFromMe        = [coder decodeBoolForKey:@"isFromMe"];
 		}
 		else
 		{
@@ -110,13 +97,8 @@
 		[coder encodeObject:jid];
 		[coder encodeObject:localTimestamp];
 		[coder encodeObject:remoteTimestamp];
-    [coder encodeObject:@(isFromMe)];
+		[coder encodeObject:[NSNumber numberWithBool:isFromMe]];
 	}
-}
-
-+ (BOOL) supportsSecureCoding
-{
-    return YES;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

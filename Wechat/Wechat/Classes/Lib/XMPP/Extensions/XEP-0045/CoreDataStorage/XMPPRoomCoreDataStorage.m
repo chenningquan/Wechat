@@ -60,7 +60,7 @@
 
 static XMPPRoomCoreDataStorage *sharedInstance;
 
-+ (instancetype)sharedInstance
++ (XMPPRoomCoreDataStorage *)sharedInstance
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -808,7 +808,7 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
 		
-		NSManagedObjectContext *moc = inMoc ? : [self managedObjectContext];
+		NSManagedObjectContext *moc = inMoc ? inMoc : [self managedObjectContext];
 		
 		NSEntityDescription *entity = [self messageEntity:moc];
 		
@@ -818,15 +818,15 @@ static XMPPRoomCoreDataStorage *sharedInstance;
 			NSString *streamBareJidStr = [[self myJIDForXMPPStream:xmppStream] bare];
 			
 			NSString *predicateFormat = @"roomJIDStr == %@ AND streamBareJidStr == %@";
-			predicate = [NSPredicate predicateWithFormat:predicateFormat, roomJID.bare, streamBareJidStr];
+			predicate = [NSPredicate predicateWithFormat:predicateFormat, roomJID, streamBareJidStr];
 		}
 		else
 		{
-			predicate = [NSPredicate predicateWithFormat:@"roomJIDStr == %@", roomJID.bare];
+			predicate = [NSPredicate predicateWithFormat:@"roomJIDStr == %@", roomJID];
 		}
 		
 		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"localTimestamp" ascending:NO];
-		NSArray *sortDescriptors = @[sortDescriptor];
+		NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
 		
 		NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 		[fetchRequest setEntity:entity];

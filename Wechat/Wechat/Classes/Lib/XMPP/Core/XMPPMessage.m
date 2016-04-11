@@ -11,8 +11,6 @@
 
 @implementation XMPPMessage
 
-#if DEBUG
-
 + (void)initialize
 {
 	// We use the object_setClass method below to dynamically change the class from a standard NSXMLElement.
@@ -34,8 +32,6 @@
 		exit(15);
 	}
 }
-
-#endif
 
 + (XMPPMessage *)messageFromElement:(NSXMLElement *)element
 {
@@ -255,7 +251,7 @@
     NSXMLElement *error = [self elementForName:@"error"];
     return [NSError errorWithDomain:@"urn:ietf:params:xml:ns:xmpp-stanzas"
                                code:[error attributeIntValueForName:@"code"]
-                           userInfo:@{NSLocalizedDescriptionKey : [error compactXMLString]}];
+                           userInfo:[NSDictionary dictionaryWithObject:[error compactXMLString] forKey:NSLocalizedDescriptionKey]];
     
 }
 

@@ -30,7 +30,7 @@
 
 - (void)setHaveFailed:(BOOL)flag
 {
-	self.failed = @(flag);
+	self.failed = [NSNumber numberWithBool:flag];
 }
 
 @end

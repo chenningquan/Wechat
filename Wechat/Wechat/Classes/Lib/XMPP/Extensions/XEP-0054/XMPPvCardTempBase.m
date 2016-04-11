@@ -38,23 +38,15 @@
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-    NSString *xmlString;
-    if([coder allowsKeyedCoding])
-    {
-        if([coder respondsToSelector:@selector(requiresSecureCoding)] &&
-           [coder requiresSecureCoding])
-        {
-            xmlString = [coder decodeObjectOfClass:[NSString class] forKey:@"xmlString"];
-        }
-        else
-        {
-            xmlString = [coder decodeObjectForKey:@"xmlString"];
-        }
-    }
-    else
-    {
-        xmlString = [coder decodeObject];
-    }
+	NSString *xmlString;
+	if([coder allowsKeyedCoding])
+	{
+		xmlString = [coder decodeObjectForKey:@"xmlString"];
+	}
+	else
+	{
+		xmlString = [coder decodeObject];
+	}
 	
 	// The method [super initWithXMLString:error:] may return a different self.
 	// In other words, it may [self release], and alloc/init/return a new self.
@@ -84,11 +76,6 @@
 	{
 		[coder encodeObject:xmlString];
 	}
-}
-
-+ (BOOL) supportsSecureCoding
-{
-    return YES;
 }
 
 - (id)copyWithZone:(NSZone *)zone

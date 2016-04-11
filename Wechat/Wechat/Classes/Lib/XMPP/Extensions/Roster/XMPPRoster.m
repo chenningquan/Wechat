@@ -91,7 +91,7 @@ enum XMPPRosterFlags
 	{
         XMPPLogVerbose(@"%@: Activated", THIS_FILE);
 
-        xmppIDTracker = [[XMPPIDTracker alloc] initWithStream:xmppStream dispatchQueue:moduleQueue];
+        xmppIDTracker = [[XMPPIDTracker alloc] initWithDispatchQueue:moduleQueue];
 		
 		#ifdef _XMPP_VCARD_AVATAR_MODULE_H
 		{
@@ -332,23 +332,6 @@ enum XMPPRosterFlags
 	
 	return result;
 }
-
-- (BOOL)hasRoster
-{
-    __block BOOL result = NO;
-	
-	dispatch_block_t block = ^{
-		result = (flags & kHasRoster) ? YES : NO;
-	};
-	
-	if (dispatch_get_specific(moduleQueueTag))
-		block();
-	else
-		dispatch_sync(moduleQueue, block);
-	
-	return result;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Utilities
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -368,6 +351,13 @@ enum XMPPRosterFlags
 		flags |= kRequestedRoster;
 	else
 		flags &= ~kRequestedRoster;
+}
+
+- (BOOL)_hasRoster
+{
+	NSAssert(dispatch_get_specific(moduleQueueTag) , @"Invoked on incorrect queue");
+	
+	return (flags & kHasRoster) ? YES : NO;
 }
 
 - (void)_setHasRoster:(BOOL)flag
@@ -401,7 +391,7 @@ enum XMPPRosterFlags
 {
     NSAssert(dispatch_get_specific(moduleQueueTag) , @"Invoked on incorrect queue");
     
-    BOOL hasRoster = [self hasRoster];
+    BOOL hasRoster = [self _hasRoster];
     
     for (NSXMLElement *item in rosterItems)
     {
@@ -680,22 +670,8 @@ enum XMPPRosterFlags
 	XMPPPresence *presence = [XMPPPresence presenceWithType:@"unsubscribed" to:[jid bareJID]];
 	[xmppStream sendElement:presence];
 }
+
 - (void)fetchRoster
-{
-	// This is a public method, so it may be invoked on any thread/queue.
-	
-	dispatch_block_t block = ^{ @autoreleasepool {
-		
-		[self fetchRosterVersion:nil];
-        
-	}};
-	
-	if (dispatch_get_specific(moduleQueueTag))
-		block();
-	else
-		dispatch_async(moduleQueue, block);
-}
-- (void)fetchRosterVersion:(NSString *)version
 {
 	// This is a public method, so it may be invoked on any thread/queue.
 	
@@ -708,12 +684,10 @@ enum XMPPRosterFlags
 		}
 		
 		// <iq type="get">
-		//   <query xmlns="jabber:iq:roster" ver="ver14"/>
+		//   <query xmlns="jabber:iq:roster"/>
 		// </iq>
 		
 		NSXMLElement *query = [NSXMLElement elementWithName:@"query" xmlns:@"jabber:iq:roster"];
-        if (version)
-            [query addAttributeWithName:@"ver" stringValue:version];
 		
 		XMPPIQ *iq = [XMPPIQ iqWithType:@"get" elementID:[xmppStream generateUUID]];
 		[iq addChild:query];
@@ -743,16 +717,15 @@ enum XMPPRosterFlags
     dispatch_block_t block = ^{ @autoreleasepool {
         
         NSXMLElement *query = [iq elementForName:@"query" xmlns:@"jabber:iq:roster"];
-        NSString * version = [query attributeStringValueForName:@"ver"];
         
-		BOOL hasRoster = [self hasRoster];
+		BOOL hasRoster = [self _hasRoster];
 		
 		if (!hasRoster)
 		{
             [xmppRosterStorage clearAllUsersAndResourcesForXMPPStream:xmppStream];
             [self _setPopulatingRoster:YES];
-            [multicastDelegate xmppRosterDidBeginPopulating:self withVersion:version];
-			[xmppRosterStorage beginRosterPopulationForXMPPStream:xmppStream withVersion:version];
+            [multicastDelegate xmppRosterDidBeginPopulating:self];
+			[xmppRosterStorage beginRosterPopulationForXMPPStream:xmppStream];
 		}
 		
 		NSArray *items = [query elementsForName:@"item"];
@@ -825,7 +798,7 @@ enum XMPPRosterFlags
         }
         else if([iq isResultIQ])
         {
-            [xmppIDTracker invokeForElement:iq withObject:iq];
+            [xmppIDTracker invokeForID:[iq elementID] withObject:iq];
         }
 		
 		return YES;
@@ -840,7 +813,7 @@ enum XMPPRosterFlags
 	
 	XMPPLogTrace();
 	
-	if (![self hasRoster] && ![self allowRosterlessOperation])
+	if (![self _hasRoster] && ![self allowRosterlessOperation])
 	{
 		// We received a presence notification,
 		// but we don't have a roster to apply it to yet.

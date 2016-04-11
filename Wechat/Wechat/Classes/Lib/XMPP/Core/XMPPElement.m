@@ -27,15 +27,7 @@
 	NSString *xmlString;
 	if([coder allowsKeyedCoding])
 	{
-        if([coder respondsToSelector:@selector(requiresSecureCoding)] &&
-           [coder requiresSecureCoding])
-        {
-            xmlString = [coder decodeObjectOfClass:[NSString class] forKey:@"xmlString"];
-        }
-        else
-        {
-            xmlString = [coder decodeObjectForKey:@"xmlString"];
-        }
+		xmlString = [coder decodeObjectForKey:@"xmlString"];
 	}
 	else
 	{
@@ -69,11 +61,6 @@
 	{
 		[coder encodeObject:xmlString];
 	}
-}
-
-+ (BOOL) supportsSecureCoding
-{
-    return YES;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

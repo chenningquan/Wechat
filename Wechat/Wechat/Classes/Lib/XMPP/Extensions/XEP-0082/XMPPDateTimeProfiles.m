@@ -5,8 +5,6 @@
 #warning This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
 #endif
 
-static NSString * const kXEP0082SharedDateFormatterKey = @"xep0082_shared_date_formatter_key";
-
 @interface XMPPDateTimeProfiles (PrivateAPI)
 + (NSDate *)parseDateTime:(NSString *)dateTimeStr withMandatoryTimeZone:(BOOL)mandatoryTZ;
 @end
@@ -45,9 +43,9 @@ static NSString * const kXEP0082SharedDateFormatterKey = @"xep0082_shared_date_f
 	// 
 	// 1776-07-04
 	
-	NSDateFormatter *df = [self threadDateFormatter];
+	NSDateFormatter *df = [[NSDateFormatter alloc] init];
 	[df setFormatterBehavior:NSDateFormatterBehavior10_4]; // Use unicode patterns (as opposed to 10_3)
-    [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+	[df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]]; //Bypass NSDateFormatter locale bug
 	[df setDateFormat:@"yyyy-MM-dd"];
 	
 	NSDate *result = [df dateFromString:dateStr];
@@ -85,9 +83,9 @@ static NSString * const kXEP0082SharedDateFormatterKey = @"xep0082_shared_date_f
 	// For example, -0800 instead of the current -0700.
 	// This can be rather confusing when printing the result.
 	
-	NSDateFormatter *df = [self threadDateFormatter];
+	NSDateFormatter *df = [[NSDateFormatter alloc] init];
 	[df setFormatterBehavior:NSDateFormatterBehavior10_4]; // Use unicode patterns (as opposed to 10_3)
-    [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+	[df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]]; //Bypass NSDateFormatter locale bug
 	[df setDateFormat:@"yyyy-MM-dd"];
 	
 	NSString *today = [df stringFromDate:[NSDate date]];
@@ -189,9 +187,9 @@ static NSString * const kXEP0082SharedDateFormatterKey = @"xep0082_shared_date_f
 	
 	if (mandatoryTZ && !hasTimeZoneInfo) return nil;
 	
-	NSDateFormatter *df = [self threadDateFormatter];
+	NSDateFormatter *df = [[NSDateFormatter alloc] init];
 	[df setFormatterBehavior:NSDateFormatterBehavior10_4]; // Use unicode patterns (as opposed to 10_3)
-    [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+	[df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]]; //Bypass NSDateFormatter locale bug
 	[df setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
 
 	NSDate *result = nil;
@@ -279,17 +277,6 @@ static NSString * const kXEP0082SharedDateFormatterKey = @"xep0082_shared_date_f
 	}
 	
 	return [NSTimeZone timeZoneForSecondsFromGMT:secondsOffset];
-}
-
-+ (NSDateFormatter *)threadDateFormatter {
-  NSMutableDictionary *currentThreadStorage = [[NSThread currentThread] threadDictionary];
-  NSDateFormatter *sharedDateFormatter = currentThreadStorage[kXEP0082SharedDateFormatterKey];
-  if (!sharedDateFormatter) {
-    sharedDateFormatter = [NSDateFormatter new];
-    currentThreadStorage[kXEP0082SharedDateFormatterKey] = sharedDateFormatter;
-  }
-  
-  return sharedDateFormatter;
 }
 
 @end

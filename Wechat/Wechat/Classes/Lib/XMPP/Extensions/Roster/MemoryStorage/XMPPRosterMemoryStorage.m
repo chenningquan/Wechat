@@ -122,7 +122,7 @@
 {
 	AssertPrivateQueue();
 	
-	XMPPUserMemoryStorageObject *result = roster[[jid bareJID]];
+	XMPPUserMemoryStorageObject *result = [roster objectForKey:[jid bareJID]];
 	
 	if (result)
 	{
@@ -610,7 +610,7 @@
 #pragma mark XMPPRosterStorage Protocol
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)beginRosterPopulationForXMPPStream:(XMPPStream *)stream withVersion:(NSString *)version
+- (void)beginRosterPopulationForXMPPStream:(XMPPStream *)stream
 {
 	XMPPLogTrace();
 	AssertParentQueue();
@@ -646,7 +646,7 @@
 		XMPPUserMemoryStorageObject *newUser =
 		    (XMPPUserMemoryStorageObject *)[[self.userClass alloc] initWithItem:item];
 		
-		roster[jid] = newUser;
+		[roster setObject:newUser forKey:jid];
 		
 		XMPPLogVerbose(@"roster(%lu): %@", (unsigned long)[roster count], roster);
 	}
@@ -656,7 +656,7 @@
 		
 		if ([subscription isEqualToString:@"remove"])
 		{
-			XMPPUserMemoryStorageObject *user = roster[jid];
+			XMPPUserMemoryStorageObject *user = [roster objectForKey:jid];
 			if (user)
 			{
 				[roster removeObjectForKey:jid];
@@ -669,7 +669,7 @@
 		}
 		else
 		{
-			XMPPUserMemoryStorageObject *user = roster[jid];
+			XMPPUserMemoryStorageObject *user = [roster objectForKey:jid];
 			if (user)
 			{
 				[user updateWithItem:item];
@@ -684,7 +684,7 @@
 				XMPPUserMemoryStorageObject *newUser =
 				    (XMPPUserMemoryStorageObject *)[[self.userClass alloc] initWithItem:item];
 				
-				roster[jid] = newUser;
+				[roster setObject:newUser forKey:jid];
 				
 				XMPPLogVerbose(@"roster(%lu): %@", (unsigned long)[roster count], roster);
 				
@@ -708,7 +708,7 @@
 	
 	XMPPJID *jidKey = [[presence from] bareJID];
 	
-	user = roster[jidKey];
+	user = [roster objectForKey:jidKey];
 	if (user == nil)
 	{
 		// Not a presence element from anyone in our roster (that we know of).
@@ -726,7 +726,7 @@
 			
 			user = (XMPPUserMemoryStorageObject *)[[self.userClass alloc] initWithJID:jidKey];
 			
-			roster[jidKey] = user;
+			[roster setObject:user forKey:jidKey];
 			
 			[[self multicastDelegate] xmppRoster:self didAddUser:user];
 			[[self multicastDelegate] xmppRosterDidChange:self];
@@ -756,7 +756,7 @@
 	AssertParentQueue();
 	
 	XMPPJID *jidKey = [jid bareJID];
-	XMPPUserMemoryStorageObject *rosterUser = roster[jidKey];
+	XMPPUserMemoryStorageObject *rosterUser = [roster objectForKey:jidKey];
 	
 	return (rosterUser != nil);
 }
@@ -771,7 +771,7 @@
 	AssertParentQueue();
 	
 	XMPPJID *jidKey = [jid bareJID];
-	XMPPUserMemoryStorageObject *rosterUser = roster[jidKey];
+	XMPPUserMemoryStorageObject *rosterUser = [roster objectForKey:jidKey];
 	
 	if (rosterUser)
 	{
@@ -817,44 +817,6 @@
 	}
     
     return results;
-}
-
-- (void)getSubscription:(NSString **)subscription
-					ask:(NSString **)ask
-			   nickname:(NSString **)nickname
-				 groups:(NSArray **)groups
-				 forJID:(XMPPJID *)jid
-			 xmppStream:(XMPPStream *)stream
-{
-
-	XMPPLogTrace();
-	AssertParentQueue();
-
-	XMPPJID *jidKey = [jid bareJID];
-	XMPPUserMemoryStorageObject *rosterUser = roster[jidKey];
-
-	if(rosterUser)
-	{
-		if(subscription)
-		{
-			*subscription = rosterUser.subscription;
-		}
-
-		if(ask)
-		{
-			*ask = rosterUser.ask;
-		}
-
-		if(nickname)
-		{
-			*nickname = rosterUser.nickname;
-		}
-		
-		if(groups)
-		{
-			*groups = rosterUser.groups;
-		}
-	}
 }
 
 @end

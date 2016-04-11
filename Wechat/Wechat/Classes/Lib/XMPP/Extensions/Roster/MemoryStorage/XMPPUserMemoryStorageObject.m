@@ -33,8 +33,6 @@
 		
 		itemAttributes = [[NSMutableDictionary alloc] initWithCapacity:0];
 		
-		groups = [[NSMutableArray alloc] initWithCapacity:0];
-		
 		[self commonInit];
 	}
 	return self;
@@ -48,19 +46,6 @@
 		jid = [[XMPPJID jidWithString:jidStr] bareJID];
 		
 		itemAttributes = [item attributesAsDictionary];
-		
-		groups = [[NSMutableArray alloc] initWithCapacity:0];
-		
-		NSArray *groupElements = [item elementsForName:@"group"];
-		
-		for (NSXMLElement *groupElement in groupElements) {
-			NSString *groupName = [groupElement stringValue];
-		
-			if ([groupName length])
-			{
-				[groups addObject:groupName];
-			}
-		}
 		
 		[self commonInit];
 	}
@@ -80,15 +65,14 @@
 	
 	deepCopy->jid = [jid copy];
 	deepCopy->itemAttributes = [itemAttributes mutableCopy];
-	deepCopy->groups = [groups mutableCopy];
 	
 	deepCopy->resources = [[NSMutableDictionary alloc] initWithCapacity:[resources count]];
 	
 	for (XMPPJID *key in resources)
 	{
-		XMPPResourceMemoryStorageObject *resourceCopy = [resources[key] copy];
+		XMPPResourceMemoryStorageObject *resourceCopy = [[resources objectForKey:key] copy];
 		
-		deepCopy->resources[key] = resourceCopy;
+		[deepCopy->resources setObject:resourceCopy forKey:key];
 	}
 	
 	[deepCopy recalculatePrimaryResource];
@@ -117,39 +101,20 @@
 	{
 		if ([coder allowsKeyedCoding])
 		{
-            if([coder respondsToSelector:@selector(requiresSecureCoding)] &&
-               [coder requiresSecureCoding])
-            {
-                jid             = [coder decodeObjectOfClass:[XMPPJID class] forKey:@"jid"];
-                itemAttributes  = [[coder decodeObjectOfClass:[NSDictionary class] forKey:@"itemAttributes"] mutableCopy];
-                groups          = [[coder decodeObjectOfClass:[NSArray class] forKey:@"groups"] mutableCopy];
-#if TARGET_OS_IPHONE
-                photo           = [[UIImage alloc] initWithData:[coder decodeObjectOfClass:[NSData class] forKey:@"photo"]];
-#else
-                photo           = [[NSImage alloc] initWithData:[coder decodeObjectOfClass:[NSData class] forKey:@"photo"]];
-#endif
-                resources       = [[coder decodeObjectOfClass:[NSDictionary class] forKey:@"resources"] mutableCopy];
-                primaryResource = [coder decodeObjectOfClass:[XMPPResourceMemoryStorageObject class] forKey:@"primaryResource"];
-            }
-            else
-            {
-                jid             = [coder decodeObjectForKey:@"jid"];
-                itemAttributes  = [[coder decodeObjectForKey:@"itemAttributes"] mutableCopy];
-                groups          = [[coder decodeObjectForKey:@"groups"] mutableCopy];
-#if TARGET_OS_IPHONE
-                photo           = [[UIImage alloc] initWithData:[coder decodeObjectForKey:@"photo"]];
-#else
-                photo           = [[NSImage alloc] initWithData:[coder decodeObjectForKey:@"photo"]];
-#endif
-                resources       = [[coder decodeObjectForKey:@"resources"] mutableCopy];
-                primaryResource = [coder decodeObjectForKey:@"primaryResource"];
-            }
+			jid             = [coder decodeObjectForKey:@"jid"];
+			itemAttributes  = [[coder decodeObjectForKey:@"itemAttributes"] mutableCopy];
+		#if TARGET_OS_IPHONE
+			photo           = [[UIImage alloc] initWithData:[coder decodeObjectForKey:@"photo"]];
+		#else
+			photo           = [[NSImage alloc] initWithData:[coder decodeObjectForKey:@"photo"]];
+		#endif
+			resources       = [[coder decodeObjectForKey:@"resources"] mutableCopy];
+			primaryResource = [coder decodeObjectForKey:@"primaryResource"];
 		}
 		else
 		{
 			jid             = [coder decodeObject];
 			itemAttributes  = [[coder decodeObject] mutableCopy];
-			groups          = [[coder decodeObject] mutableCopy];
 		#if TARGET_OS_IPHONE
 			photo           = [[UIImage alloc] initWithData:[coder decodeObject]];
 		#else
@@ -168,7 +133,6 @@
 	{
 		[coder encodeObject:jid forKey:@"jid"];
 		[coder encodeObject:itemAttributes forKey:@"itemAttributes"];
-		[coder encodeObject:groups forKey:@"groups"];
 	#if TARGET_OS_IPHONE
 		[coder encodeObject:UIImagePNGRepresentation(photo) forKey:@"photo"];
 	#else
@@ -181,7 +145,6 @@
 	{
 		[coder encodeObject:jid];
 		[coder encodeObject:itemAttributes];
-		[coder encodeObject:groups];
 	#if TARGET_OS_IPHONE
 		[coder encodeObject:UIImagePNGRepresentation(photo)];
 	#else
@@ -190,11 +153,6 @@
 		[coder encodeObject:resources];
 		[coder encodeObject:primaryResource];
 	}
-}
-
-+ (BOOL) supportsSecureCoding
-{
-    return YES;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,17 +168,7 @@
 
 - (NSString *)nickname
 {
-	return (NSString *) itemAttributes[@"name"];
-}
-
-- (NSString *)subscription
-{
-	return (NSString *) itemAttributes[@"subscription"];
-}
-
-- (NSString *)ask
-{
-	return (NSString *) itemAttributes[@"ask"];
+	return (NSString *)[itemAttributes objectForKey:@"name"];
 }
 
 - (NSString *)displayName
@@ -230,11 +178,6 @@
 		return nickname;
 	else
 		return [jid bare];
-}
-
-- (NSArray *)groups
-{
-	return [groups copy];
 }
 
 - (BOOL)isOnline
@@ -248,8 +191,8 @@
 	// <item ask='subscribe' subscription='none' jid='robbiehanson@deusty.com'/>
 	// <item ask='subscribe' subscription='from' jid='robbiehanson@deusty.com'/>
 	
-	NSString *subscription = itemAttributes[@"subscription"];
-	NSString *ask = itemAttributes[@"ask"];
+	NSString *subscription = [itemAttributes objectForKey:@"subscription"];
+	NSString *ask = [itemAttributes objectForKey:@"ask"];
 	
 	if ([subscription isEqualToString:@"none"] || [subscription isEqualToString:@"from"])
 	{
@@ -269,7 +212,7 @@
 
 - (id <XMPPResource>)resourceForJID:(XMPPJID *)aJid
 {
-	return resources[aJid];
+	return [resources objectForKey:aJid];
 }
 
 - (NSArray *)allResources
@@ -313,7 +256,7 @@
 	NSArray *sortedResources = [[self allResources] sortedArrayUsingSelector:@selector(compare:)];
 	if ([sortedResources count] > 0)
 	{
-		XMPPResourceMemoryStorageObject *possiblePrimary = sortedResources[0];
+		XMPPResourceMemoryStorageObject *possiblePrimary = [sortedResources objectAtIndex:0];
 		
 		// Primary resource must have a non-negative priority
 		if ([[possiblePrimary presence] priority] >= 0)
@@ -343,20 +286,7 @@
 		NSString *key   = [node name];
 		NSString *value = [node stringValue];
 		
-		itemAttributes[key] = value;
-	}
-	
-	[groups removeAllObjects];
-	
-	NSArray *groupElements = [item elementsForName:@"group"];
-	
-	for (NSXMLElement *groupElement in groupElements) {
-		NSString *groupName = [groupElement stringValue];
-		
-		if ([groupName length])
-		{
-			[groups addObject:groupName];
-		}
+		[itemAttributes setObject:value forKey:key];
 	}
 }
 
@@ -372,7 +302,7 @@
 	
 	if ([presenceType isEqualToString:@"unavailable"] || [presenceType isEqualToString:@"error"])
 	{
-		resource = resources[key];
+		resource = [resources objectForKey:key];
 		if (resource)
 		{
 			[resources removeObjectForKey:key];
@@ -383,7 +313,7 @@
 	}
 	else
 	{
-		resource = resources[key];
+		resource = [resources objectForKey:key];
 		if (resource)
 		{
 			[self willUpdateResource:resource withPresence:presence];
@@ -396,7 +326,7 @@
 		{
 			resource = (XMPPResourceMemoryStorageObject *)[[resourceClass alloc] initWithPresence:presence];
 			
-			resources[key] = resource;
+			[resources setObject:resource forKey:key];
 			[self didAddResource:resource withPresence:presence];
 			
 			result = XMPP_USER_ADDED_RESOURCE;

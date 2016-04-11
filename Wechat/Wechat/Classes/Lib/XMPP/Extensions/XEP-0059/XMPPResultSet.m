@@ -117,13 +117,13 @@
 	{
         if(max != NSNotFound)
         {
-            NSXMLElement *maxElement = [NSXMLElement elementWithName:@"max" stringValue:[@(max) stringValue]];
+            NSXMLElement *maxElement = [NSXMLElement elementWithName:@"max" stringValue:[[NSNumber numberWithInteger:max] stringValue]];
             [self addChild:maxElement];
         }
         
         if(firstIndex != NSNotFound)
         {
-            NSXMLElement *maxElement = [NSXMLElement elementWithName:@"index" stringValue:[@(firstIndex) stringValue]];
+            NSXMLElement *maxElement = [NSXMLElement elementWithName:@"index" stringValue:[[NSNumber numberWithInteger:firstIndex] stringValue]];
             [self addChild:maxElement];
         }
         

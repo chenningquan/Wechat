@@ -150,7 +150,7 @@
 
 - (void)setIsFromMe:(BOOL)value
 {
-	self.fromMe = @(value);
+	self.fromMe = [NSNumber numberWithBool:value];
 }
 
 #pragma mark - Message

@@ -94,7 +94,7 @@
 
 - (void)setPriority:(int)priority
 {
-	self.priorityNum = @(priority);
+	self.priorityNum = [NSNumber numberWithInt:priority];
 }
 
 - (int)intShow
@@ -104,7 +104,7 @@
 
 - (void)setIntShow:(int)intShow
 {
-	self.showNum = @(intShow);
+	self.showNum = [NSNumber numberWithInt:intShow];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

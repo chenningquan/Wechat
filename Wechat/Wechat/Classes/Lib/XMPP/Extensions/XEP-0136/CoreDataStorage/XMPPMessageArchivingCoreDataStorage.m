@@ -32,7 +32,7 @@
 
 static XMPPMessageArchivingCoreDataStorage *sharedInstance;
 
-+ (instancetype)sharedInstance
++ (XMPPMessageArchivingCoreDataStorage *)sharedInstance
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -166,21 +166,20 @@ static XMPPMessageArchivingCoreDataStorage *sharedInstance;
 	
 	NSString *predicateFrmt = @"composing == YES AND bareJidStr == %@ AND outgoing == %@ AND streamBareJidStr == %@";
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFrmt,
-                                                            [messageJid bare], @(isOutgoing),
-                                                            [streamJid bare]];
+	                             [messageJid bare], [NSNumber numberWithBool:isOutgoing], [streamJid bare]];
 	
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:NO];
 	
 	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 	fetchRequest.entity = messageEntity;
 	fetchRequest.predicate = predicate;
-	fetchRequest.sortDescriptors = @[sortDescriptor];
+	fetchRequest.sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
 	fetchRequest.fetchLimit = 1;
 	
 	NSError *error = nil;
 	NSArray *results = [moc executeFetchRequest:fetchRequest error:&error];
 	
-	if (results == nil || error)
+	if (results == nil)
 	{
 		XMPPLogError(@"%@: %@ - Error executing fetchRequest: %@", THIS_FILE, THIS_METHOD, fetchRequest);
 	}
@@ -461,7 +460,7 @@ static XMPPMessageArchivingCoreDataStorage *sharedInstance;
 					
 				contact.mostRecentMessageTimestamp = archivedMessage.timestamp;
 				contact.mostRecentMessageBody = archivedMessage.body;
-				contact.mostRecentMessageOutgoing = @(isOutgoing);
+				contact.mostRecentMessageOutgoing = [NSNumber numberWithBool:isOutgoing];
 				
 				XMPPLogVerbose(@"New contact: %@", contact);
 				

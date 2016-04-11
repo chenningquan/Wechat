@@ -3,7 +3,7 @@
 #import "XMPPRoomOccupant.h"
 
 
-@interface XMPPRoomOccupantHybridMemoryStorageObject : NSObject <XMPPRoomOccupant, NSCopying, NSSecureCoding>
+@interface XMPPRoomOccupantHybridMemoryStorageObject : NSObject <XMPPRoomOccupant, NSCopying, NSCoding>
 
 - (id)initWithPresence:(XMPPPresence *)presence streamFullJid:(XMPPJID *)streamFullJid;
 - (void)updateWithPresence:(XMPPPresence *)presence;

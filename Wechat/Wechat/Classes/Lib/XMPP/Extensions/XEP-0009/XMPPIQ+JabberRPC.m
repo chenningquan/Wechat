@@ -143,7 +143,7 @@
 		member = [NSXMLElement elementWithName:@"member"];
 		name = [NSXMLElement elementWithName:@"name" stringValue:key];
 		[member addChild:name];
-		[member addChild:[self valueElementFromObject:dictionary[key]]];
+		[member addChild:[self valueElementFromObject:[dictionary objectForKey:key]]];
 	}
 	
 	return [self wrapValueElementAroundElement:structElement];
