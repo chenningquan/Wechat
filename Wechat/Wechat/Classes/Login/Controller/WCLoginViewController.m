@@ -45,8 +45,9 @@
 //    [defaults synchronize];
     
     //把用户和密码先放到account单例
-    [WCAccount shareAccount].user = self.userfield.text;
-    [WCAccount shareAccount].pwd = self.pwdfield.text;
+    [WCAccount shareAccount].loginUser = self.userfield.text;
+    [WCAccount shareAccount].loginPwd = self.pwdfield.text;
+    [WCAccount shareAccount].registOperation = NO;
     
     //2.2调用Appdelegate的登录方法
     //怎么把appdelegate的登录结果告诉WCLoginViewController控制器(代理，block，通知)

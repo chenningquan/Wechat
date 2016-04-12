@@ -151,6 +151,7 @@
 		D33436691CBBB2140041AF32 /* libidn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D33435DE1CBBB2140041AF32 /* libidn.a */; };
 		D334366C1CBBB5410041AF32 /* login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D334366B1CBBB5410041AF32 /* login.storyboard */; };
 		D334366E1CBBB5510041AF32 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D334366D1CBBB5510041AF32 /* Main.storyboard */; };
+		D340B61D1CBCC51D003E93BA /* WCRegistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D340B61C1CBCC51D003E93BA /* WCRegistViewController.m */; };
 		D38A8D791CB7616000268DE3 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D38A8D781CB7616000268DE3 /* libxml2.tbd */; };
 		D38A8DE41CB7626A00268DE3 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D38A8DE31CB7626A00268DE3 /* libresolv.tbd */; };
 		D3BD30261CB2504F00C3E58F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D3BD30251CB2504F00C3E58F /* main.m */; };
@@ -477,6 +478,8 @@
 		D334366A1CBBB2E10041AF32 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		D334366B1CBBB5410041AF32 /* login.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = login.storyboard; sourceTree = "<group>"; };
 		D334366D1CBBB5510041AF32 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		D340B61B1CBCC51D003E93BA /* WCRegistViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCRegistViewController.h; sourceTree = "<group>"; };
+		D340B61C1CBCC51D003E93BA /* WCRegistViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCRegistViewController.m; sourceTree = "<group>"; };
 		D38A8D781CB7616000268DE3 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		D38A8DE31CB7626A00268DE3 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		D3B5BF0F1CB3BA4E00F3FAA8 /* test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
@@ -550,6 +553,8 @@
 			children = (
 				D33434631CBBB0A60041AF32 /* WCLoginViewController.h */,
 				D33434641CBBB0A60041AF32 /* WCLoginViewController.m */,
+				D340B61B1CBCC51D003E93BA /* WCRegistViewController.h */,
+				D340B61C1CBCC51D003E93BA /* WCRegistViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1718,6 +1723,7 @@
 				D33435EC1CBBB2140041AF32 /* XMPPDeprecatedPlainAuthentication.m in Sources */,
 				D334364E1CBBB2140041AF32 /* XEP_0223.m in Sources */,
 				D334360C1CBBB2140041AF32 /* XMPPIQ+JabberRPCResonse.m in Sources */,
+				D340B61D1CBCC51D003E93BA /* WCRegistViewController.m in Sources */,
 				D334365A1CBBB2140041AF32 /* XMPPStringPrep.m in Sources */,
 				D33436581CBBB2140041AF32 /* XMPPIDTracker.m in Sources */,
 				D33436521CBBB2140041AF32 /* XMPPMessage+XEP_0308.m in Sources */,

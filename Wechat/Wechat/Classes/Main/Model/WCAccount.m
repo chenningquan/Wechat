@@ -25,8 +25,8 @@
             
             //从沙盒获取上次的用户登录信息
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            account.user = [defaults objectForKey:@"user"];
-            account.pwd = [defaults objectForKey:@"pwd"];
+            account.loginUser = [defaults objectForKey:@"user"];
+            account.loginPwd = [defaults objectForKey:@"pwd"];
             account.login = [defaults objectForKey:@"login"];
         }
     });
@@ -36,8 +36,8 @@
 -(void)saveToSandBox
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:self.user forKey:@"user"];
-    [defaults setObject:self.pwd forKey:@"pwd"];
+    [defaults setObject:self.loginUser forKey:@"user"];
+    [defaults setObject:self.loginPwd forKey:@"pwd"];
     [defaults setBool:self.isLogin forKey:@"login"];
     [defaults synchronize];
 }

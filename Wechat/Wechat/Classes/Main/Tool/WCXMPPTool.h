@@ -15,8 +15,10 @@
 singleton_interface(WCXMPPTool)
 
 typedef enum {
-    XMPPResultTypeLoginSuccess,
-    XMPPResultTypeLoginFailure
+    XMPPResultTypeLoginSuccess,//用户登录成功
+    XMPPResultTypeLoginFailure,//用户登录失败
+    XMPPResultTypeRegistSuccess,//用户注册成功
+    XMPPResultTypeRegistFailure //用户注册失败
 }XMPPResultType;
 
 typedef void (^XMPPReultBlock)(XMPPResultType);
@@ -29,6 +31,10 @@ typedef void (^XMPPReultBlock)(XMPPResultType);
  *xmpp用户注销
  */
 - (void)xmpplogout;
+/**
+ *用户注册
+ */
+- (void)xmppregist:(XMPPReultBlock)resultBlock;
 
 
 @end

@@ -10,8 +10,16 @@
 
 @interface WCAccount : NSObject
 
-@property (nonatomic,copy)NSString *user;
-@property (nonatomic,copy)NSString *pwd;
+@property (nonatomic,copy)NSString *loginUser;
+@property (nonatomic,copy)NSString *loginPwd;
+@property (nonatomic,copy)NSString *registUser;
+@property (nonatomic,copy)NSString *registPwd;
+/**
+ *判断是注册还是登录
+ *NO  : 登录
+ *YES : 注册
+ */
+@property (nonatomic,assign,getter=isregistOperation)BOOL registOperation;
 /**
  *判断用户是否登录
  */
